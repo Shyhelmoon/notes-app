@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notes App</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+    input, textarea { width: 100%; margin-bottom: 8px; padding: 8px; box-sizing: border-box; }
+    button { padding: 8px 16px; cursor: pointer; }
+    .note { border: 1px solid #ccc; padding: 12px; margin-top: 12px; border-radius: 4px; }
+    .note h3 { margin: 0 0 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>Notes</h1>
+
+  <input type="text" id="title" placeholder="Title" />
+  <textarea id="body" placeholder="Write your note..." rows="4"></textarea>
+  <button onclick="createNote()">Add Note</button>
+
+  <div id="notes-list"></div>
+
+  <script>
+    const API = 'http://localhost:8080/api/notes';
+
+    async function loadNotes() {
+      const res = await fetch(API);
+      const notes = await res.json();
+      const list = document.getElementById('notes-list');
+      list.innerHTML = '';
+      notes.forEach(note => {
+        list.innerHTML += `
+          <div class="note">
+            <h3>${note.title}</h3>
+            <p>${note.body}</p>
+            <button onclick="deleteNote(${note.id})">Delete</button>
+          </div>`;
+      });
+    }
+
+    async function createNote() {
+      const title = document.getElementById('title').value;
+      const body = document.getElementById('body').value;
+      await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, body })
+      });
+      document.getElementById('title').value = '';
+      document.getElementById('body').value = '';
+      loadNotes();
+    }
+
+    async function deleteNote(id) {
+      await fetch(`${API}/${id}`, { method: 'DELETE' });
+      loadNotes();
+    }
+
+    loadNotes();
+  </script>
+</body>
+</html>
