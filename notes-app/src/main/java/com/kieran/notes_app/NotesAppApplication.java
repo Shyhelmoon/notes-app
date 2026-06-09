@@ -13,14 +13,15 @@ public class NotesAppApplication {
 		SpringApplication.run(NotesAppApplication.class, args);
 	}
 
-	@Bean
+		@Bean
 		public WebMvcConfigurer corsConfigurer() {
 			return new WebMvcConfigurer() {
 				@Override
 				public void addCorsMappings(CorsRegistry registry) {
 					registry.addMapping("/api/**")
-							.allowedOrigins("*")
-							.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+							.allowedOrigins("https://shyhelmoon.github.io")
+							.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+							.allowedHeaders("*");
 				}
 			};
 		}
